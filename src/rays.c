@@ -1,15 +1,19 @@
 #include "../headers/header.h"
 
 ray_t rays[NUM_RAYS];
+
 static bool foundHorzWallHit, foundVertWallHit;
 static float horzWallHitX, horzWallHitY, vertWallHitX, vertWallHitY;
 static int horzWallContent, vertWallContent;
 
+
 /**
-* horizontalInter - finds horizontal intersection with the wall
-* @rayAngle: current ray angle
-*/
-void horizontalInter(float rayAngle)
+ * horzIntersection - Finds horizontal intersection with the wall
+ * @rayAngle: current ray angle
+ *
+ */
+
+void horzIntersection(float rayAngle)
 {
 	float nextHorzTouchX, nextHorzTouchY, xintercept, yintercept, xstep, ystep;
 
@@ -38,7 +42,8 @@ void horizontalInter(float rayAngle)
 		{
 			horzWallHitX = nextHorzTouchX;
 			horzWallHitY = nextHorzTouchY;
-			horzWallContent = getMapValue((int)floor(yToCheck / TILE_SIZE),(int)floor(xToCheck / TILE_SIZE));
+			horzWallContent = getMapValue((int)floor(yToCheck / TILE_SIZE),
+									   (int)floor(xToCheck / TILE_SIZE));
 			foundHorzWallHit = true;
 			break;
 		}
@@ -48,11 +53,12 @@ void horizontalInter(float rayAngle)
 }
 
 /**
-* verticalInter - finds vertical intersection with the wall
-* @rayAngle: current ray angle
-*/
+ * vertIntersection - Finds vertical intersection with the wall
+ * @rayAngle: current ray angle
+ *
+ */
 
-void verticalInter(float rayAngle)
+void vertIntersection(float rayAngle)
 {
 	float nextVertTouchX, nextVertTouchY;
 	float xintercept, yintercept, xstep, ystep;
@@ -83,7 +89,8 @@ void verticalInter(float rayAngle)
 		{
 			vertWallHitX = nextVertTouchX;
 			vertWallHitY = nextVertTouchY;
-			vertWallContent = getMapValue((int)floor(yToCheck / TILE_SIZE),(int)floor(xToCheck / TILE_SIZE));
+			vertWallContent = getMapValue((int)floor(yToCheck / TILE_SIZE),
+									   (int)floor(xToCheck / TILE_SIZE));
 			foundVertWallHit = true;
 			break;
 		}
@@ -93,25 +100,10 @@ void verticalInter(float rayAngle)
 }
 
 /**
-* castAllRays - cast all rays
-*/
-
-void castAllRays(void)
-{
-	int col;
-
-	for (col = 0; col < NUM_RAYS; col++)
-	{
-		float rayAngle = player.rotationAngle + atan((col - NUM_RAYS / 2) / PROJ_PLANE);
-		castRay(rayAngle, col);
-	}
-}
-
-/**
-* castRay - casting of each ray
-* @rayAngle: current ray angle
-* @stripId: ray strip identifier
-*/
+ * castRay - casting of each ray
+ * @rayAngle: current ray angle
+ * @stripId: ray strip identifier
+ */
 
 void castRay(float rayAngle, int stripId)
 {
@@ -121,9 +113,9 @@ void castRay(float rayAngle, int stripId)
 	if (rayAngle < 0)
 		rayAngle = TWO_PI + rayAngle;
 
-	horizontalInter(rayAngle);
+	horzIntersection(rayAngle);
 
-	verticalInter(rayAngle);
+	vertIntersection(rayAngle);
 
 	horzHitDistance = foundHorzWallHit
 		? distanceBetweenPoints(player.x, player.y, horzWallHitX, horzWallHitY)
@@ -154,14 +146,32 @@ void castRay(float rayAngle, int stripId)
 }
 
 /**
-* renderRays - draw all the rays
-*/
+ * castAllRays - cast of all rays
+ *
+ */
+
+void castAllRays(void)
+{
+	int col;
+
+	for (col = 0; col < NUM_RAYS; col++)
+	{
+		float rayAngle = player.rotationAngle +
+							atan((col - NUM_RAYS / 2) / PROJ_PLANE);
+		castRay(rayAngle, col);
+	}
+}
+
+/**
+ * renderRays - draw all the rays
+ *
+ */
 
 void renderRays(void)
 {
 	int i;
 
-	for (i = 0; i < NUM_RAYS; i++)
+	for (i = 0; i < NUM_RAYS; i += 50)
 	{
 		drawLine(
 			player.x * MINIMAP_SCALE_FACTOR,
