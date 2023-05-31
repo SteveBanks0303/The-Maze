@@ -1,14 +1,36 @@
 #include "../headers/header.h"
 
-bool gameRunning = false;
-int TicksLastFrame = 0;
+bool GameRunning = false;
+int TicksLastFrame;
 player_t player;
 
 /**
-* updateGame - update delta time per frame
+ * setup_game - initialize player variables and load wall textures
+ *
 */
 
-void updateGame(void)
+void setup_game(void)
+{
+
+	player.x = SCREEN_WIDTH / 2;
+	player.y = SCREEN_HEIGHT / 2;
+	player.width = 1;
+	player.height = 30;
+	player.walkDirection = 0;
+	player.walkSpeed = 100;
+	player.turnDirection = 0;
+	player.turnSpeed = 45 * (PI / 180);
+	player.rotationAngle = PI / 2;
+	WallTexturesready();
+}
+
+
+/**
+ * update_game - update_game delta time, the ticks last frame
+ *          the player movement and the ray casting
+ *
+*/
+void update_game(void)
 {
 	float DeltaTime;
 	int timeToWait = FRAME_TIME_LENGTH - (SDL_GetTicks() - TicksLastFrame);
@@ -22,32 +44,19 @@ void updateGame(void)
 	TicksLastFrame = SDL_GetTicks();
 
 	movePlayer(DeltaTime);
+	castAllRays();
 }
 
 /**
-* setupGame - initialize player and load wall textures
-*/
-void setupGame(void)
-{
-
-	player.x = SCREEN_WIDTH / 2;
-	player.y = SCREEN_HEIGHT / 2;
-	player.width = 10;
-	player.height = 30;
-	player.walkDirection = 0;
-	player.walkSpeed = 100;
-	player.turnDirection = 0;
-	player.turnSpeed = 45 * (PI / 180);
-	player.rotationAngle = PI / 2;
-}
-
-/**
-* renderGame - calls all functions for rendering
+ * render - calls all functions needed for on-screen rendering
+ *
 */
 
-void renderGame(void)
+void render_game(void)
 {
+	clearColorBuffer(0xFF000000);
 
+	renderWall();
 
 	renderMap();
 	renderRays();
@@ -57,34 +66,32 @@ void renderGame(void)
 }
 
 /**
-* DestroyGame - free wall textures and destroy window
+ * Destroy - free wall textures and destroy window
+ *
 */
-
-void destroyGame(void)
+void destroy_game(void)
 {
-	//freeWallTextures();
+	freeWallTextures();
 	destroyWindow();
-
 }
 
 /**
-* main - entry point
-* Return: 0
+ * main - main function
+ * Return: 0
 */
 
 int main(void)
 {
-	gameRunning = initializedWindow();
-	setupGame();
+	GameRunning = initializeWindow();
 
-	while (gameRunning)
+	setup_game();
 
+	while (GameRunning)
 	{
 		handleInput();
-		updateGame();
-		renderGame();
-		
+		update_game();
+		render_game();
 	}
-	destroyWindow();
+	destroy_game();
 	return (0);
 }
