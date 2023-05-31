@@ -1,15 +1,14 @@
 #include "../headers/header.h"
 
-static const char* textureFileNames[NUM_TEXTURES] = {
-	"redbrick.png",
-	"purplestone.png",
-	"eagle.png",
-	"mossystone.png",
-	"colorstone.png",
-	"bluestone.png",
-	"graystone.png",
-	"wood.png",
-
+static const char *textureFileNames[NUM_TEXTURES] = {
+	"./images/redbrick.png",
+	"./images/purplestone.png",
+	"./images/mossystone.png",
+	"./images/graystone.png",
+	"./images/colorstone.png",
+	"./images/bluestone.png",
+	"./images/wood.png",
+	"./images/eagle.png",
 };
 
 /**
@@ -22,7 +21,7 @@ void WallTexturesready(void)
 
 	for (i = 0; i < NUM_TEXTURES; i++)
 	{
-		upng_t* upng;
+		upng_t *upng;
 
 		upng = upng_new_from_file(textureFileNames[i]);
 
@@ -34,10 +33,9 @@ void WallTexturesready(void)
 				wallTextures[i].upngTexture = upng;
 				wallTextures[i].width = upng_get_width(upng);
 				wallTextures[i].height = upng_get_height(upng);
-				wallTextures[i].texture_buffer = (color_t*)upng_get_buffer(upng);
+				wallTextures[i].texture_buffer = (color_t *)upng_get_buffer(upng);
 			}
 		}
-
 	}
 
 }
